@@ -41,3 +41,66 @@
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+(function($, global, undefined){
+  var $mailSubject = $("#mail-subject"),  //チェック用メールタイトル
+  $mailBody = $("#mail-body"), //チェック用メール本文
+  $buttonBar = $("#button-bar"), //エラー表示用
+  $mailForm = $("#mail-form"); //フォーム、sendMailを呼び出す際に利用
+  
+  //clickイベント追加
+  $(function(){
+    $("#send-mail-button").click(sendMail);
+  });
+  
+  //タイトルと本文のチェック
+  function validateForm(){
+    var hasError = false;
+
+    if($mailSubject.val() == "") {
+      showError("メールタイトルは必須です。", $mailSubject); 
+      hasError = true;
+    }
+    
+    if($mailBody.val() == "") {
+      showError("メール本文は必須です。", $mailBody); 
+      hasError = true;
+    }
+    return hasError;
+  }
+  
+  //メール送信処理(送信ボタンのイベントハンドラ)
+  function sendMail(){
+  
+    //ボタンを非活性に
+    this.disabled = true; //this === $("#send-mail-button")
+    
+    //エラー表示を一度削除
+    $(".error").remove();
+    
+    //バリデーションをしてエラーが有る場合はボタンを戻して終了
+    if(validateForm()) {
+      this.disabled = false;
+      return;    
+    }
+    
+    //Server側呼び出し
+    google.script.run
+    .withSuccessHandler(function(result, element){ //成功時
+      element.disabled = false;
+    })
+    .withFailureHandler(function(error, element){  //失敗時
+      showError(error, $buttonBar);
+      element.disabled = false;
+    })
+    .withUserObject(this) //with****Handlerの第二引数を設定
+    .sendMail($mailForm.get(0));  //Server側を実際に呼び出し
+  }
+  
+  //エラー表示
+  function showError(msg, element) {
+    var div = $('<div class="error">' + msg + '</div>');
+    $(element).after(div);
+  }
+})(jQuery, window);
+</script>

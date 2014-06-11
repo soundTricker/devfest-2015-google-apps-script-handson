@@ -11,14 +11,16 @@ function showSidebar() {
   
 }
 
-function sendMail() {
-  
-  //メールデータ
-  var mailForm = {
-    subject : "テスト To ${氏名}さん",
-    body : "Hello ${氏名}さん"
-  };
-  
+function sendMail(mailForm) { //←mailFormというプロパティにsubject、body(共にsidebar.htmlのinputのname)を持つオブジェクトを引数にする
+
+//↓不要になるので削除
+//メールデータ
+//  var mailForm = {
+//    subject : "テスト To ${氏名}さん",
+//    body : "Hello ${氏名}さん"
+//  };
+
+  //↓以降は当分そのまま
   //① Spreadsheetの「メール配信」シートから配信先の取得
   var sheet = SpreadsheetApp.getActive().getSheetByName("メール配信");
   
@@ -44,12 +46,14 @@ function sendMail() {
     MailApp.sendEmail(to, subject, body);
     
     //⑤ 連続で送るとエラーになるので少し待たせます。
-    Utilities.sleep(100);    
+    Utilities.sleep(100);
   }
-  
-  
+
   //⑤ 完了した旨をSpreadsheetに表示します。
   SpreadsheetApp.getUi().alert("メール送信が完了しました");
+
+  //↑ここまでそのまま 値を返却するように 修正(ただし未使用)
+  return {message : "メール送信が完了しました"};
 }
 
 function onOpen() {
