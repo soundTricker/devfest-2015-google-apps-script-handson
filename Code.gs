@@ -69,6 +69,27 @@ function onOpen() {
 }
 
 /**
+ * テストメール送信します。テストメールは利用しているユーザ宛に送信されます。(サイドバーから呼び出されます。)
+ * @param {object} mailForm メールの内容 subject:タイトル, body:本文
+ * @return {object} 送信結果
+ */
+function sendTestMail(mailForm) {
+  validateMailForm_(mailForm);
+  
+  //Session.getActiveUser().getEmail()でこのスクリプトを起動したユーザのEmailが取得できる。
+  //ただしスクリプトを作成した本人のみ
+  var me = Session.getActiveUser().getEmail();
+  
+  var body = mailForm.body.replace(nameReplaceRegex, me);
+  var subject = mailForm.subject.replace(nameReplaceRegex, me);
+  
+  MailApp.sendEmail(me, subject, body);
+  
+  SpreadsheetApp.getUi().alert("テストメール送信が完了しました");
+  return {message: "テストメール送信が完了しました"};
+}
+
+/**
  * メールの内容をチェックします。
  * @param {object} mailForm メールの内容 subject:タイトル, body:本文
  */

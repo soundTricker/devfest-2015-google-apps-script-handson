@@ -51,6 +51,7 @@
   //clickイベント追加
   $(function(){
     $("#send-mail-button").click(sendMail);
+    $("#send-test-mail-button").click(sendTestMail);
   });
   
   //タイトルと本文のチェック
@@ -97,6 +98,26 @@
     .sendMail($mailForm.get(0));  //Server側を実際に呼び出し
   }
   
+  function sendTestMail() {
+    this.disabled = true; //this === $("#send-test-mail-button")
+    $(".error").remove();
+    
+    if(validateForm()) {
+      this.disabled = false;
+      return;    
+    }
+    
+    google.script.run
+    .withSuccessHandler(function(result, element){
+      element.disabled = false;
+    })
+    .withFailureHandler(function(error, element){
+      showError(error, $buttonBar);
+      element.disabled = false;
+    })
+    .withUserObject(this)
+    .sendTestMail($mailForm.get(0));  
+  }
   //エラー表示
   function showError(msg, element) {
     var div = $('<div class="error">' + msg + '</div>');
