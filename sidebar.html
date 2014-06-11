@@ -1,0 +1,43 @@
+<!-- GASのテンプレートでは<html>タグや<body>タグは不要です。(正確にはあると若干表示速度が下がります。) -->
+<!-- add-ons cssはGoogleが提供しているGAS用CSSでSpreadsheetやDocs, FormのUIに近いL/Fを提供します。-->
+<!-- 各種使える定義や見た目は https://developers.google.com/apps-script/add-ons/css を参照して下さい -->
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+
+<style>
+.width-100 {
+  width: 100%;
+}
+.logo {
+  vertical-align: middle;
+}
+</style>
+
+<div>
+
+  <div class="sidebar branding-below">
+    <form id="mail-form">
+      <div class="block form-group">
+        <label for="mail-subject"><b>メールタイトル</b></label>
+        <input type="text" name="subject" placeholder="こんにちは ${氏名}" id="mail-subject" class="width-100">
+      </div>
+      <div class="block form-group">
+        <label for="mail-body"><b>メール本文</b></label>
+        <textarea id="mail-body" name="body" class="width-100" rows="15" placeholder="To ${氏名} ... ${置換文字1}"></textarea>
+        <span class="secondary">${カラム名}で置換されます。</span>
+      </div>
+
+    <div class="block" id="button-bar">
+      <button class="blue" id="send-mail-button">送信</button>
+      <button id="send-test-mail-button">テスト送信</button>
+    </div>
+    </form>
+   </div>
+
+  <div class="sidebar bottom">
+    <span class="logo"><img alt="Add-on logo" class="logo" width="64" height="36"
+      src="https://googledrive.com/host/0BwzWIlBMCiR9M2tlTHlZLU5PT0E/img/GTUGG_white.png"></span>
+    <span class="gray">GTUG Girls Meetup #17</span>
+  </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
