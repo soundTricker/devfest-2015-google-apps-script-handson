@@ -48,6 +48,10 @@ function sendMail(mailForm) { //←mailFormというプロパティにsubject、
     //メール配信
     MailApp.sendEmail(to, subject, body);
     
+    //現在処理中の行の末尾のカラム2列に送信完了日とステータスを入れる Appendix 3)
+    //getRangeで使うrow,columnは1から始まりです。
+    sheet.getRange(i + 1, row.length - 1, 1 , 2).setValues([["済", new Date()]]);
+    
     //⑤ 連続で送るとエラーになるので少し待たせます。
     Utilities.sleep(100);
   }
