@@ -1,6 +1,16 @@
 function myFunction() {
 }
 
+function showSidebar() {
+  
+  //HTMLファイルを読込み ※引数のファイル名は.htmlを省略可能です。
+  var sidebarHtml = HtmlService.createHtmlOutputFromFile("sidebar").setTitle("メール配信");
+ 
+  //SpreadsheetApp上で表示
+  SpreadsheetApp.getUi().showSidebar(sidebarHtml);
+  
+}
+
 function sendMail() {
   
   //メールデータ
@@ -46,7 +56,7 @@ function onOpen() {
 
   SpreadsheetApp.getUi() //①UIオブジェクトの取得
   .createMenu("メール配信") //②Spreadsheetに「メール配信」メニューを追加
-  .addItem("メールを送信", "sendMail") //③メニュー内にアイテムを追加、sendMail関数を呼ぶように指定
+  .addItem("サイドバーを表示", "showSidebar") //③メニュー内にアイテムを追加、showSidebar関数を呼ぶように指定
   .addToUi();  //④実際に"Spreadsheet"へ追加 ※ここを呼ばないと追加されません.
 
 } 
