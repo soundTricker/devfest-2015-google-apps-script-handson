@@ -11,14 +11,19 @@ function showSidebar() {
   
 }
 
-function sendMail() {
-  
-  //メールデータ
-  var mailForm = {
-    subject : "テスト To ${氏名}さん",
-    body : "Hello ${氏名}さん"
-  };
-  
+function sendMail(mailForm) { //←mailFormというプロパティにsubject、body(共にsidebar.htmlのinputのname)を持つオブジェクトを引数にする
+
+//↓不要になるので削除
+//メールデータ
+//  var mailForm = {
+//    subject : "テスト To ${氏名}さん",
+//    body : "Hello ${氏名}さん"
+//  };
+
+  //パラメータチェック
+  validateMailForm_(mailForm);
+
+  //↓以降は当分そのまま
   //① Spreadsheetの「メール配信」シートから配信先の取得
   var sheet = SpreadsheetApp.getActive().getSheetByName("メール配信");
   
@@ -44,12 +49,14 @@ function sendMail() {
     MailApp.sendEmail(to, subject, body);
     
     //⑤ 連続で送るとエラーになるので少し待たせます。
-    Utilities.sleep(100);    
+    Utilities.sleep(100);
   }
-  
-  
+
   //⑤ 完了した旨をSpreadsheetに表示します。
   SpreadsheetApp.getUi().alert("メール送信が完了しました");
+
+  //↑ここまでそのまま 値を返却するように 修正(ただし未使用)
+  return {message : "メール送信が完了しました"};
 }
 
 function onOpen() {
@@ -59,4 +66,22 @@ function onOpen() {
   .addItem("サイドバーを表示", "showSidebar") //③メニュー内にアイテムを追加、showSidebar関数を呼ぶように指定
   .addToUi();  //④実際に"Spreadsheet"へ追加 ※ここを呼ばないと追加されません.
 
-} 
+}
+
+/**
+ * メールの内容をチェックします。
+ * @param {object} mailForm メールの内容 subject:タイトル, body:本文
+ */
+//関数名の最後に_(アンダースコア)が付いているとその関数はプライベート関数になります。
+//プライベート関数は上部の関数呼び出しSelectBoxに表示されない、google.script.runで呼び出せないなどの特徴があります。
+function validateMailForm_(mailForm) {
+
+  if (mailForm.subject == ""){
+    throw new Error("メールタイトルは必須です。");
+  }
+  
+  if (mailForm.body == ""){
+    throw new Error("メール本文は必須です。");
+  }
+}
+
