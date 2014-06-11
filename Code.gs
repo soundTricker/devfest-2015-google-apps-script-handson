@@ -1,16 +1,55 @@
-function myFunction() {
+
+/**
+ * Spreadsheet表示時にメニューを追加します。
+ * 
+ * onOpen関数はGASの中では特殊な関数で、
+ * この名前で関数を作成すると"Spreadsheet"起動時に
+ * 誰が起動したとしても自動的に呼び出されるようになります。
+ */
+function onOpen() {
+
+  SpreadsheetApp.getUi()           //UIオブジェクトの取得
+  .createMenu("メール配信")    //Spreadsheetに「メール配信」メニューを追加
+  .addItem("サイドバーを表示", "showSidebar")  //追加したメニュー内にアイテムを追加、"showSidebar"関数を呼ぶように指定
+  .addItem("About", "showAbout")   //Appendix2) Aboudを表示
+  .addToUi();                      //実際に"Spreadsheet"へ追加 ※ここを呼ばないと追加されません.
 }
 
+/**
+ * Aboutダイアログを表示します。
+ */
+function showAbout() {
+  SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutputFromFile("about"), "About this.");
+}
+
+/**
+ * サイドバーを表示します。
+ */
 function showSidebar() {
   
-  //HTMLファイルを読込み ※引数のファイル名は.htmlを省略可能です。
-  var sidebarHtml = HtmlService.createHtmlOutputFromFile("sidebar").setTitle("メール配信");
- 
+  //Appendix 5)
+  //前回の送信で保存したメールタイトル、本文を取得
+  var userProp = PropertiesService.getUserProperties();
+  
+  
+  var prevMailForm = {
+    subject : userProp.getProperty("subject") || "",
+    body : userProp.getProperty("body") || ""
+  };
+  
+//  //HTMLファイルを読込み ※引数のファイル名は.htmlを省略可能です。
+//  var sidebarHtml = HtmlService.createHtmlOutputFromFile("sidebar").setTitle("メール配信");
+
+  //Appendix 5)
+  //sidebarをテンプレートして扱う
+  var sidebarHtml = HtmlService.createTemplateFromFile("sidebar");
+  
+  sidebarHtml.prevMailForm = prevMailForm;
+
   //SpreadsheetApp上で表示
-  SpreadsheetApp.getUi().showSidebar(sidebarHtml);
+  SpreadsheetApp.getUi().showSidebar(sidebarHtml.evaluate().setTitle("メール配信"));
   
 }
-
 /**
  * メール送信します。(サイドバーから呼び出されます。)
  * @param {object} mailForm メールの内容 subject:タイトル, body:本文
@@ -59,34 +98,16 @@ function sendMail(mailForm) {
     Utilities.sleep(100);
   }
   
+  
   //完了した旨をSpreadsheetに表示します。
   SpreadsheetApp.getUi().alert("メール送信が完了しました");
   
+  //今回のメールタイトル、本文を保存 Appendix 5)
+  var userProp = PropertiesService.getUserProperties();
+  userProp.setProperty("subject", mailForm.subject);
+  userProp.setProperty("body", mailForm.body);
+  
   return {message: "メール送信が完了しました"};
-}
-
-
-/**
- * Spreadsheet表示時にメニューを追加します。
- * 
- * onOpen関数はGASの中では特殊な関数で、
- * この名前で関数を作成すると"Spreadsheet"起動時に
- * 誰が起動したとしても自動的に呼び出されるようになります。
- */
-function onOpen() {
-
-  SpreadsheetApp.getUi()           //UIオブジェクトの取得
-  .createMenu("メール配信")    //Spreadsheetに「メール配信」メニューを追加
-  .addItem("サイドバーを表示", "showSidebar")  //追加したメニュー内にアイテムを追加、"showSidebar"関数を呼ぶように指定
-  .addItem("About", "showAbout")   //Appendix2) Aboudを表示
-  .addToUi();                      //実際に"Spreadsheet"へ追加 ※ここを呼ばないと追加されません.
-}
-
-/**
- * Aboutダイアログを表示します。
- */
-function showAbout() {
-  SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutputFromFile("about"), "About this.");
 }
 
 /**
@@ -110,6 +131,7 @@ function sendTestMail(mailForm) {
   return {message: "テストメール送信が完了しました"};
 }
 
+
 /**
  * メールの内容をチェックします。
  * @param {object} mailForm メールの内容 subject:タイトル, body:本文
@@ -126,4 +148,3 @@ function validateMailForm_(mailForm) {
     throw new Error("メール本文は必須です。");
   }
 }
-

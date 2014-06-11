@@ -18,11 +18,11 @@
     <form id="mail-form">
       <div class="block form-group">
         <label for="mail-subject"><b>メールタイトル</b></label>
-        <input type="text" name="subject" placeholder="こんにちは ${氏名}" id="mail-subject" class="width-100">
+        <input type="text" name="subject" placeholder="こんにちは ${氏名}" id="mail-subject" class="width-100" value="<?= prevMailForm.subject?>">
       </div>
       <div class="block form-group">
         <label for="mail-body"><b>メール本文</b></label>
-        <textarea id="mail-body" name="body" class="width-100" rows="15" placeholder="To ${氏名} ... ${置換文字1}"></textarea>
+        <textarea id="mail-body" name="body" class="width-100" rows="15" placeholder="To ${氏名} ... ${置換文字1}"><?= prevMailForm.body?></textarea>
         <span class="secondary">${カラム名}で置換されます。</span>
       </div>
 
@@ -43,11 +43,13 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
 (function($, global, undefined){
+
   var $mailSubject = $("#mail-subject"),  //チェック用メールタイトル
   $mailBody = $("#mail-body"), //チェック用メール本文
   $buttonBar = $("#button-bar"), //エラー表示用
   $mailForm = $("#mail-form"); //フォーム、sendMailを呼び出す際に利用
   
+
   //clickイベント追加
   $(function(){
     $("#send-mail-button").click(sendMail);
@@ -82,7 +84,7 @@
     //バリデーションをしてエラーが有る場合はボタンを戻して終了
     if(validateForm()) {
       this.disabled = false;
-      return;    
+      return;
     }
     
     //Server側呼び出し
@@ -97,14 +99,14 @@
     .withUserObject(this) //with****Handlerの第二引数を設定
     .sendMail($mailForm.get(0));  //Server側を実際に呼び出し
   }
-  
+
   function sendTestMail() {
     this.disabled = true; //this === $("#send-test-mail-button")
     $(".error").remove();
     
     if(validateForm()) {
       this.disabled = false;
-      return;    
+      return;
     }
     
     google.script.run
@@ -116,8 +118,9 @@
       element.disabled = false;
     })
     .withUserObject(this)
-    .sendTestMail($mailForm.get(0));  
+    .sendTestMail($mailForm.get(0));
   }
+  
   //エラー表示
   function showError(msg, element) {
     var div = $('<div class="error">' + msg + '</div>');
