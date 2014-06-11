@@ -11,39 +11,42 @@ function showSidebar() {
   
 }
 
-function sendMail(mailForm) { //←mailFormというプロパティにsubject、body(共にsidebar.htmlのinputのname)を持つオブジェクトを引数にする
-
-//↓不要になるので削除
-//メールデータ
-//  var mailForm = {
-//    subject : "テスト To ${氏名}さん",
-//    body : "Hello ${氏名}さん"
-//  };
+/**
+ * メール送信します。(サイドバーから呼び出されます。)
+ * @param {object} mailForm メールの内容 subject:タイトル, body:本文
+ * @return {object} 送信結果
+ */
+function sendMail(mailForm) {
 
   //パラメータチェック
   validateMailForm_(mailForm);
-
-  //↓以降は当分そのまま
-  //① Spreadsheetの「メール配信」シートから配信先の取得
+  
+  //Spreadsheetの「メール配信」シートから配信先の取得
   var sheet = SpreadsheetApp.getActive().getSheetByName("メール配信");
   
-  //② sheet.getDataRange()はデータが入力されている範囲を取得します。
-  //range.getValues()でその範囲に入力されているデータを2次元配列で取得します。
-  var values = sheet.getDataRange().getValues();
+  //sheet.getDataRange()はデータが入力されている範囲を取得します。
+  var dataRange = sheet.getDataRange();
   
-  //1行目はヘッダーなので, データ行は2行目からです。※headerは使いません。
+  //range.getValues()でその範囲に入力されているデータを2次元配列で取得します。
+  var values = dataRange.getValues();
+  
+  //1行目はヘッダーなので, データ行は2行目からです。
   var header = values[0];
   for(var i = 1; i < values.length; i++) {
     
-    //③ 行を取得し、1列目(index = 0)のメールアドレスを取得
     var row = values[i];
     var to = row[0];
     
-    //④ 氏名置換
-    var nameReplaceRegex = /\$\{氏名\}/gm;
+    //Appendix4) 置換 
+    var body = mailForm.body + "";
+    var subject = mailForm.subject + "";
     
-    var body = mailForm.body.replace(nameReplaceRegex, row[1]);
-    var subject = mailForm.subject.replace(nameReplaceRegex, row[1]);
+    //ヘッダーのカラム名で全て置換
+    for(var colIndex = 0; colIndex < header.length; colIndex++) {
+      var replaceRegex = new RegExp("\\$\\{" + header[colIndex] + "\\}", "gm");
+      body = body.replace(replaceRegex, row[colIndex]);
+      subject = subject.replace(replaceRegex, row[colIndex]);
+    }
     
     //メール配信
     MailApp.sendEmail(to, subject, body);
@@ -52,16 +55,16 @@ function sendMail(mailForm) { //←mailFormというプロパティにsubject、
     //getRangeで使うrow,columnは1から始まりです。
     sheet.getRange(i + 1, row.length - 1, 1 , 2).setValues([["済", new Date()]]);
     
-    //⑤ 連続で送るとエラーになるので少し待たせます。
+    //連続で送るとエラーになるので少し待たせます。
     Utilities.sleep(100);
   }
-
-  //⑤ 完了した旨をSpreadsheetに表示します。
+  
+  //完了した旨をSpreadsheetに表示します。
   SpreadsheetApp.getUi().alert("メール送信が完了しました");
-
-  //↑ここまでそのまま 値を返却するように 修正(ただし未使用)
-  return {message : "メール送信が完了しました"};
+  
+  return {message: "メール送信が完了しました"};
 }
+
 
 /**
  * Spreadsheet表示時にメニューを追加します。
