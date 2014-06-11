@@ -1,4 +1,4 @@
-gtug-girls-17-google-apps-script-handson
+GTUG Girls#17 Google Apps Scrpt Handon Step1
 ========================================
 
-GTUG Girls #17(2014/06/19)のGoogle Apps Script ハンズオンで作成するフルコード (See https://docs.google.com/document/d/1ErCSfPHz2pnHIrV7MjkUy71lesvEr8_NRVyuaGxM0fM/edit#)
+See https://docs.google.com/document/d/1ErCSfPHz2pnHIrV7MjkUy71lesvEr8_NRVyuaGxM0fM/edit#heading=h.x2gr2c3zxuf9
