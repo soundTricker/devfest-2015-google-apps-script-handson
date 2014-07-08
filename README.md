@@ -1,7 +1,7 @@
-GTUG Girls#17 Google Apps Scrpt Handson 
+GTUG Girls#17 Google Apps Script Handson 
 ========================================
 
-このリポジトリはGTUG Girls #17 Google Apps Scrpt Handsonで作成する、
+このリポジトリはGTUG Girls #17 Google Apps Script Handsonで作成する、
 アプリケーションのコードを保存してあります。
 
 資料にStep、AppdenixにあわせてTAGを切ってあるので、Diffを取る場合は活用して下さい。
