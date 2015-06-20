@@ -1,7 +1,7 @@
 <!-- GASのテンプレートでは<html>タグや<body>タグは不要です。(正確にはあると若干表示速度が下がります。) -->
 <!-- add-ons cssはGoogleが提供しているGAS用CSSでSpreadsheetやDocs, FormのUIに近いL/Fを提供します。-->
 <!-- 各種使える定義や見た目は https://developers.google.com/apps-script/add-ons/css を参照して下さい -->
-<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
 
 <style>
 .width-100 {
@@ -35,8 +35,8 @@
 
   <div class="sidebar bottom">
     <span class="logo"><img alt="Add-on logo" class="logo" width="64" height="36"
-      src="https://googledrive.com/host/0BwzWIlBMCiR9M2tlTHlZLU5PT0E/img/GTUGG_white.png"></span>
-    <span class="gray">GTUG Girls Meetup #17</span>
+      src="http://itnav.jp/images/logo.gif"></span>
+    <span class="gray">DevFest@イトナブ</span>
   </div>
 </div>
 
@@ -84,7 +84,7 @@
     //バリデーションをしてエラーが有る場合はボタンを戻して終了
     if(validateForm()) {
       this.disabled = false;
-      return;
+      return;    
     }
     
     //Server側呼び出し
@@ -106,19 +106,19 @@
     
     if(validateForm()) {
       this.disabled = false;
-      return;
+      return;    
     }
     
     google.script.run
-    .withSuccessHandler(function(result, element){
+    .withSuccessHandler(function(result, element){      
       element.disabled = false;
     })
-    .withFailureHandler(function(error, element){
+    .withFailureHandler(function(error, element){      
       showError(error, $buttonBar);
       element.disabled = false;
     })
     .withUserObject(this)
-    .sendTestMail($mailForm.get(0));
+    .sendTestMail($mailForm.get(0));  
   }
   
   //エラー表示
@@ -128,3 +128,5 @@
   }
 })(jQuery, window);
 </script>
+
+

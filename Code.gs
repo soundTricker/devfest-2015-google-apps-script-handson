@@ -13,13 +13,16 @@ function onOpen() {
   .addItem("サイドバーを表示", "showSidebar")  //追加したメニュー内にアイテムを追加、"showSidebar"関数を呼ぶように指定
   .addItem("About", "showAbout")   //Appendix2) Aboudを表示
   .addToUi();                      //実際に"Spreadsheet"へ追加 ※ここを呼ばないと追加されません.
-}
+} 
 
 /**
  * Aboutダイアログを表示します。
  */
 function showAbout() {
-  SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutputFromFile("about"), "About this.");
+  
+  about = HtmlService.createHtmlOutputFromFile("about").setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  
+  SpreadsheetApp.getUi().showModalDialog(about, "About this.");
 }
 
 /**
@@ -45,9 +48,12 @@ function showSidebar() {
   var sidebarHtml = HtmlService.createTemplateFromFile("sidebar");
   
   sidebarHtml.prevMailForm = prevMailForm;
+  
+  sidebarHtml = sidebarHtml.evaluate().setTitle("メール配信").setSandboxMode(HtmlService.SandboxMode.IFRAME);
 
   //SpreadsheetApp上で表示
-  SpreadsheetApp.getUi().showSidebar(sidebarHtml.evaluate().setTitle("メール配信"));
+
+  SpreadsheetApp.getUi().showSidebar(sidebarHtml);
   
 }
 /**
@@ -82,7 +88,7 @@ function sendMail(mailForm) {
     
     //ヘッダーのカラム名で全て置換
     for(var colIndex = 0; colIndex < header.length; colIndex++) {
-      var replaceRegex = new RegExp("\\$\\{" + header[colIndex] + "\\}", "gm");
+      var replaceRegex = new RegExp("\\$\\{" + header[colIndex] + "\\}", "gm");      
       body = body.replace(replaceRegex, row[colIndex]);
       subject = subject.replace(replaceRegex, row[colIndex]);
     }
@@ -95,7 +101,7 @@ function sendMail(mailForm) {
     sheet.getRange(i + 1, row.length - 1, 1 , 2).setValues([["済", new Date()]]);
     
     //連続で送るとエラーになるので少し待たせます。
-    Utilities.sleep(100);
+    Utilities.sleep(100);    
   }
   
   
@@ -120,7 +126,7 @@ function sendTestMail(mailForm) {
   
   //Session.getActiveUser().getEmail()でこのスクリプトを起動したユーザのEmailが取得できる。
   //ただしスクリプトを作成した本人のみ
-  var me = Session.getActiveUser().getEmail();
+  var me = Session.getActiveUser().getEmail();  
   
   var body = mailForm.body.replace(nameReplaceRegex, me);
   var subject = mailForm.subject.replace(nameReplaceRegex, me);
@@ -148,3 +154,9 @@ function validateMailForm_(mailForm) {
     throw new Error("メール本文は必須です。");
   }
 }
+
+
+
+
+
+
